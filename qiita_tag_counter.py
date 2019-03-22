@@ -62,7 +62,7 @@ def _print_tags(user_id):
         tags.extend([tag['name'] for tag in item['tags']])
 
     for tag, count in sorted(Counter(tags).items(), key=lambda x: x[1], reverse=True):
-        print(tag, count)
+        print(count, tag)
 
 
 def main():
