@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import json
 import urllib
@@ -51,7 +53,6 @@ def _args():
 
 
 def _print_tags(user_id):
-    # TODO: `sum(likes_count)`
     headers = {}
 
     items_count = Users(headers).get(user_id)['items_count']
@@ -65,9 +66,31 @@ def _print_tags(user_id):
         print(count, tag)
 
 
+def _print_tag_contributes(user_id):
+    headers = {}
+
+    items_count = Users(headers).get(user_id)['items_count']
+    items = Items(headers, user_id=user_id).set_query({'page': 1, 'per_page': items_count}).list()
+
+    tags = {}
+    for item in items:
+        for tag in item['tags']:
+            if not tags.get(tag['name']):
+                tags[tag['name']] = 0
+            tags[tag['name']] += int(item['likes_count'])
+
+    for tag, count in sorted(tags.items(), key=lambda x: x[1], reverse=True):
+        print(count, tag)
+
+
 def main():
+    # TODO: pandas
     args = _args()
+    print('--')
     _print_tags(args.user)
+    print('--')
+    _print_tag_contributes(args.user)
+    print('--')
 
 
 if __name__ == '__main__':
