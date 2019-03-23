@@ -83,10 +83,10 @@ def _print_tag_contributes(user_id):
             tags['likes_count'].append(int(item['likes_count']))
 
     p = pandas.DataFrame.from_dict(tags)
-    group = p.groupby('name').sum()
-    group.columns = ['likes_count', 'name']
-    group.sort_values(by=['likes_count', 'name'], ascending=[True, True])
-    print(group)
+    group = p.groupby('name')
+    # group.columns = ['likes_count', 'name']
+    print(group.sum().sort_values(by=['likes_count', 'name'], ascending=[False, False]))
+    print(group.count().sort_values(by=['likes_count', 'name'], ascending=[False, False]))
 
     # for tag, count in sorted(tags.items(), key=lambda x: x[1], reverse=True):
         # print(count, tag)
@@ -96,7 +96,7 @@ def main():
     # TODO: pandas
     args = _args()
     print('--')
-    _print_tags(args.user)
+    # _print_tags(args.user)
     print('--')
     _print_tag_contributes(args.user)
     print('--')
