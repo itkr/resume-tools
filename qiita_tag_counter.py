@@ -6,6 +6,7 @@ import urllib
 from collections import Counter
 
 import requests
+import pandas
 
 
 class _REST(object):
@@ -72,15 +73,23 @@ def _print_tag_contributes(user_id):
     items_count = Users(headers).get(user_id)['items_count']
     items = Items(headers, user_id=user_id).set_query({'page': 1, 'per_page': items_count}).list()
 
-    tags = {}
+    tags = {
+        'name': [],
+        'likes_count': [],
+    }
     for item in items:
         for tag in item['tags']:
-            if not tags.get(tag['name']):
-                tags[tag['name']] = 0
-            tags[tag['name']] += int(item['likes_count'])
+            tags['name'].append(tag['name'])
+            tags['likes_count'].append(int(item['likes_count']))
 
-    for tag, count in sorted(tags.items(), key=lambda x: x[1], reverse=True):
-        print(count, tag)
+    p = pandas.DataFrame.from_dict(tags)
+    group = p.groupby('name').sum()
+    group.columns = ['likes_count', 'name']
+    group.sort_values(by=['likes_count', 'name'], ascending=[True, True])
+    print(group)
+
+    # for tag, count in sorted(tags.items(), key=lambda x: x[1], reverse=True):
+        # print(count, tag)
 
 
 def main():
