@@ -2,8 +2,10 @@
 
 import argparse
 import json
+import os
 import urllib
 from collections import Counter
+from datetime import date
 
 import requests
 import pandas
@@ -53,26 +55,16 @@ def _args():
     return parser.parse_args()
 
 
-def _print_tags(user_id):
-    headers = {}
+def _get_or_create_items(user_id):
+    # ファイルから
+    output_path = './output/likes_{}.json'.format(date.today().strftime('%Y-%m-%d'))
+    if os.path.exists(output_path):
+        return pandas.read_json(output_path)
 
+    # APIから
+    headers = {}
     items_count = Users(headers).get(user_id)['items_count']
     items = Items(headers, user_id=user_id).set_query({'page': 1, 'per_page': items_count}).list()
-
-    tags = []
-    for item in items:
-        tags.extend([tag['name'] for tag in item['tags']])
-
-    for tag, count in sorted(Counter(tags).items(), key=lambda x: x[1], reverse=True):
-        print(count, tag)
-
-
-def _print_tag_contributes(user_id):
-    headers = {}
-
-    items_count = Users(headers).get(user_id)['items_count']
-    items = Items(headers, user_id=user_id).set_query({'page': 1, 'per_page': items_count}).list()
-
     tags = {
         'name': [],
         'likes_count': [],
@@ -81,22 +73,30 @@ def _print_tag_contributes(user_id):
         for tag in item['tags']:
             tags['name'].append(tag['name'])
             tags['likes_count'].append(int(item['likes_count']))
+    df = pandas.DataFrame.from_dict(tags)
 
-    p = pandas.DataFrame.from_dict(tags)
-    group = p.groupby('name')
-    # group.columns = ['likes_count', 'name']
-    print(group.sum().sort_values(by=['likes_count', 'name'], ascending=[False, False]))
+    # 保存
+    df.to_json(output_path)
+    return df
+
+
+def _print_tags(user_id):
+    df = _get_or_create_items(user_id)
+    group = df.groupby('name')
     print(group.count().sort_values(by=['likes_count', 'name'], ascending=[False, False]))
 
-    # for tag, count in sorted(tags.items(), key=lambda x: x[1], reverse=True):
-        # print(count, tag)
+
+def _print_tag_contributes(user_id):
+    df = _get_or_create_items(user_id)
+    group = df.groupby('name')
+    print(group.sum().sort_values(by=['likes_count', 'name'], ascending=[False, False]))
 
 
 def main():
     # TODO: pandas
     args = _args()
     print('--')
-    # _print_tags(args.user)
+    _print_tags(args.user)
     print('--')
     _print_tag_contributes(args.user)
     print('--')

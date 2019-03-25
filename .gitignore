@@ -104,3 +104,4 @@ venv.bak/
 
 venv/
 activate.sh
+output/
