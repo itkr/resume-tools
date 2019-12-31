@@ -1,2 +1,7 @@
+# scripts
 requests
 pandas
+# gcf
+flask
+# local
+python-language-server
