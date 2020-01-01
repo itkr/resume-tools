@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/docs/">API Docmentation</a>
+        </div>
+        <a href="http://json-schema.org/" target="_blank" type="button" class="btn btn-default navbar-btn">
+          <i class="glyphicon glyphicon-question-sign"></i>
+          JSON Schema
+        </a>
+        <a href="https://www.jsonschemavalidator.net/" target="_blank" type="button" class="btn btn-default navbar-btn">
+          <i class="glyphicon glyphicon-info-sign"></i>
+          Validator
+        </a>
+      </div>
+    </nav>
+    <div class="container">
+      <table class="table">
+        <thead class="thead-inverse">
+          <tr>
+            <th>EndPoint</th>
+            <th>Method</th>
+            <th>Module</th>
+          </tr>
+        </thead>
+        {% for document in documents %}
+        {% for method in document.methods %}
+        <tr>
+          <td>
+            <a href="/docs/detail?template={{ document.template }}&method={{ method }}">
+              {{ document.template }}
+            </a>
+          </td>
+          <td>
+            {{ method }}
+          </td>
+          <td>
+            {{ document.module }}
+          </td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+     </table>
+    </div>
+  </body>
+</html>
+{% endautoescape %}

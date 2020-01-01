@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow-night.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro" rel="stylesheet">
+  <style>
+    code, cite {
+      font-size: 95%;
+      display: inline-text;
+      background-color: #eeeeee;
+      color: #666666;
+      border: 1px solid #cccccc;
+      padding: 0 3px;
+      border-radius: 3px;
+    }
+    code, cite, .code {
+      font-family: 'Source Code Pro', monospace;
+    }
+    .document-body {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+    .document-body h2 {
+      margin: 2em auto 0.5em auto;
+      padding-bottom: 0.5em;
+      border-bottom: 2px solid;
+    }
+  </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/docs/">API Docmentation</a>
+        </div>
+        <a href="http://json-schema.org/" target="_blank" type="button" class="btn btn-default navbar-btn">
+          <i class="glyphicon glyphicon-question-sign"></i>
+          JSON Schema
+        </a>
+        <a href="https://www.jsonschemavalidator.net/" target="_blank" type="button" class="btn btn-default navbar-btn">
+          <i class="glyphicon glyphicon-info-sign"></i>
+          Validator
+        </a>
+      </div>
+    </nav>
+    <div class="container document-body">
+      <div>
+        {{ document.doc_html|safe }}
+      </div>
+      <div>
+        <h2>Information</h2>
+        <table class="table table-bordered">
+          <tr>
+            <th scope="row">End Point:</th>
+            <td>{{ document.template }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Request Method:</th>
+            <td>{{ document.method }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Response Type:</th>
+            <td>{{ document.response_type }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Handler Class:</th>
+            <td>{{ document.module }}</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <h2>Request</h2>
+        {% if document.request_schema != '{}' %}
+        <h3>sample</h3>
+        <pre class="code">{{ document.request_sample }}</pre>
+        <h3>schema</h3>
+        <pre class="code">{{ document.request_schema }}</pre>
+        {% else %}
+        <h3>sample</h3>
+        ❌
+        <h3>schema</h3>
+        ❌
+        {% endif %}
+        <h3>Header sample</h3>
+        <pre class="code">{{ document.request_header_sample }}</pre>
+        <h2>Response</h2>
+        <h3>sample</h3>
+        <pre class="code">{{ document.response_sample }}</pre>
+        <h3>schema</h3>
+        <pre class="code">{{ document.response_schema }}</pre>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>
+      (function(window, document){
+        var preList = document.getElementsByClassName('code'),
+            i = 0,
+            len = preList.length;
+        for (i = 0; i < len; i++) {
+          hljs.highlightBlock(preList[i]);
+        }
+      }(this, this.document));
+    </script>
+  </body>
+</html>
+{% endautoescape %}

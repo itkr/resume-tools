@@ -3,5 +3,6 @@ requests
 pandas
 # gcf
 flask
+google-cloud-datastore
 # local
 python-language-server
